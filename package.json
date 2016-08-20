@@ -11,8 +11,7 @@
     "lint": "eslint src test",
     "test": "mocha -r babel-register",
     "tdd": "npm -s test -- -w -R min",
-    "cover": "babel-node node_modules/.bin/babel-istanbul cover _mocha",
-    "prepublish": "npm-run-all lint test"
+    "cover": "babel-node node_modules/.bin/babel-istanbul cover _mocha"
   },
   "repository": {
     "type": "git",
