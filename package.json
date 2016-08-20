@@ -1,0 +1,48 @@
+{
+  "name": "express-unit-test",
+  "version": "0.0.1",
+  "description": "",
+  "main": "dist/index.js",
+  "engines": {
+    "node": ">=6.3.1",
+    "npm": ">=3.10.3"
+  },
+  "scripts": {
+    "lint": "eslint src test",
+    "test": "mocha -r babel-register",
+    "tdd": "npm -s test -- -w -R min",
+    "cover": "babel-node node_modules/.bin/babel-istanbul cover _mocha",
+    "prepublish": "npm-run-all lint test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thebearingedge/express-unit-test.git"
+  },
+  "keywords": [
+    "unit",
+    "test",
+    "connect",
+    "middleware",
+    "express"
+  ],
+  "author": "Tim Davis",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thebearingedge/express-unit-test/issues"
+  },
+  "homepage": "https://github.com/thebearingedge/express-unit-test#readme",
+  "devDependencies": {
+    "babel-cli": "6.11.4",
+    "babel-eslint": "6.1.2",
+    "babel-istanbul": "0.11.0",
+    "babel-plugin-transform-async-to-generator": "6.8.0",
+    "babel-preset-node6": "11.0.0",
+    "chai": "3.5.0",
+    "coveralls": "2.11.12",
+    "eslint": "3.3.1",
+    "global": "4.3.0",
+    "mocha": "3.0.2",
+    "sinon": "1.17.5",
+    "sinon-chai": "2.8.0"
+  }
+}
