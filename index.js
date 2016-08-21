@@ -1,1 +1,1 @@
-module.exports = require('./dist/express-unit').default
+module.exports = require('./dist/express-unit').run
