@@ -17,7 +17,8 @@
     "tdd": "npm -s test -- -w -R min",
     "cover": "babel-node node_modules/.bin/babel-istanbul cover _mocha",
     "clean": "rimraf dist",
-    "transpile": "npm run -s clean && babel src -d dist"
+    "transpile": "npm run -s clean && babel src -d dist",
+    "ship": "npm run lint && npm run test && npm run transpile && npm publish"
   },
   "repository": {
     "type": "git",
