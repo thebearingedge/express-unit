@@ -3,50 +3,43 @@ import isFunction from 'is-function'
 import { request, response } from 'express'
 
 export function Request() {
-  Object.assign(this, {
-    app: {},
-    body: {},
-    query: {},
-    route: {},
-    params: {},
-    headers: {},
-    cookies: {},
-    signedCookies: {}
-  })
+  this.app = {}
+  this.body = {}
+  this.query = {}
+  this.route = {}
+  this.params = {}
+  this.headers = {}
+  this.cookies = {}
+  this.signedCookies = {}
 }
 Request.prototype = request
 
 export function Response() {
-  Object.assign(this, {
-    app: {},
-    locals: {}
-  })
+  this.app = {},
+  this.locals = {}
 }
 Response.prototype = response
 
 export const run = (setup, middleware, done) => {
-
   let err = null
-  const noop = () => {}
-
-  setup = setup || noop
-
+  setup = setup || (() => {})
   const req = new Request()
   const res = new Response()
-  const next = setup(req, res) || noop
+  const next = setup(req, res) || (() => {})
   const onNext = ((_err = null) => {
     err = _err
     next(err)
   })
   const result = middleware(req, res, onNext)
 
-  if (!isPromise(result) && !isFunction(done)) return
-  if (!isPromise(result) && isFunction(done)) {
+  if (!isPromise(result)) {
+    if (!isFunction(done)) return
     return done(err, req, res, next)
   }
-  if (isPromise(result) && isFunction(done)) {
-    return result.then(() => done(err, req, res, next))
-  }
 
-  return result.then(() => ({ err, req, res, next }))
+  return result.then(() => {
+    return isFunction(done)
+      ? done(err, req, res, next)
+      : { err, req, res, next }
+  })
 }
