@@ -1,8 +1,12 @@
 {
-  "name": "express-unit-test",
+  "name": "express-unit",
   "version": "0.0.1",
   "description": "",
-  "main": "dist/index.js",
+  "main": "index.js",
+  "files": [
+    "dist/",
+    "index.js"
+  ],
   "engines": {
     "node": ">=6.3.1",
     "npm": ">=3.10.3"
@@ -11,11 +15,13 @@
     "lint": "eslint src test",
     "test": "mocha -r babel-register",
     "tdd": "npm -s test -- -w -R min",
-    "cover": "babel-node node_modules/.bin/babel-istanbul cover _mocha"
+    "cover": "babel-node node_modules/.bin/babel-istanbul cover _mocha",
+    "clean": "rimraf dist",
+    "transpile": "npm run -s clean && babel src -d dist"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thebearingedge/express-unit-test.git"
+    "url": "git+https://github.com/thebearingedge/express-unit.git"
   },
   "keywords": [
     "unit",
@@ -27,9 +33,9 @@
   "author": "Tim Davis",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/thebearingedge/express-unit-test/issues"
+    "url": "https://github.com/thebearingedge/express-unit/issues"
   },
-  "homepage": "https://github.com/thebearingedge/express-unit-test#readme",
+  "homepage": "https://github.com/thebearingedge/express-unit#readme",
   "devDependencies": {
     "babel-cli": "6.11.4",
     "babel-eslint": "6.1.2",

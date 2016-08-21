@@ -1,6 +1,6 @@
 import { describe, it } from 'global'
 import { expect, spy } from './__setup__'
-import { run, Request, Response } from '../src'
+import { run, Request, Response } from '../src/express-unit'
 
 describe('run', () => {
 
