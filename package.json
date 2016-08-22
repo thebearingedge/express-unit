@@ -46,17 +46,18 @@
     "chai": "3.5.0",
     "coveralls": "2.11.12",
     "eslint": "3.3.1",
+    "express": "4.14.0",
+    "express-async-wrap": "1.0.0",
     "global": "4.3.0",
     "mocha": "3.0.2",
     "sinon": "1.17.5",
     "sinon-as-promised": "4.0.2",
     "sinon-chai": "2.8.0"
   },
-  "dependencies": {
-    "is-function": "1.0.1",
-    "is-promise": "2.1.0"
-  },
   "peerDependencies": {
     "express": "4.x"
+  },
+  "dependencies": {
+    "es6-error": "3.0.1"
   }
 }

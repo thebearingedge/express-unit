@@ -1,6 +1,7 @@
 import { describe, it } from 'global'
-import { expect, spy } from './__setup__'
-import { run, Request, Response } from '../src/express-unit'
+import wrap from 'express-async-wrap'
+import { expect, spy, stub } from './__setup__'
+import { run, Request, Response, ExpressUnitError } from '../src/express-unit'
 
 describe('run', () => {
 
@@ -10,17 +11,11 @@ describe('run', () => {
     expect(middleware).to.have.been.called
   })
 
-  it('calls a callback after invoking a middleware', done => {
-    const middleware = spy(function middleware() {})
-    run(null, middleware, () => {
-      done()
-    })
-  })
-
   it('calls a setup function before running middleware', () => {
-    const setup = spy(function setup(req, res) {
+    const setup = spy(function setup(req, res, next) {
       req.headers['foo'] = 'bar'
       res.locals.id = 1
+      next()
     })
     const middleware = spy(function middleware(req, res, next) {
       expect(req.get('foo')).to.equal('bar')
@@ -31,8 +26,20 @@ describe('run', () => {
     expect(setup).to.have.been.calledBefore(middleware)
   })
 
-  it('calls a setup function with a Request and Response', done => {
-    const setup = (req, res) => {
+  it('calls a callback after invoking a middleware', done => {
+    const setup = (req, res, next) => {
+      stub(res, 'send')
+      next()
+    }
+    const middleware = (req, res) => res.send('hola!')
+    run(setup, middleware, (err, req, res) => {
+      expect(res.send).to.have.been.calledWith('hola!')
+      done()
+    })
+  })
+
+  it('calls a setup function with a req, res, and next', done => {
+    const setup = (req, res, next) => {
       expect(req).to.be.an.instanceOf(Request)
       expect(req.app).to.be.an('object')
       expect(req.body).to.be.an('object')
@@ -44,39 +51,10 @@ describe('run', () => {
       expect(res).to.be.an.instanceOf(Response)
       expect(res.app).to.be.an('object')
       expect(res.locals).to.be.an('object')
-      done()
-    }
-    run(setup, function middleware() {})
-  })
-
-  it('uses a custom next function returned from setup', done => {
-    const next = spy()
-    const setup = () => next
-    const middleware = (req, res, next) => next()
-    run(setup, middleware, (err, req, res, next) => {
-      expect(next).to.have.been.called
-      done()
-    })
-  })
-
-  it('resolves an async middleware', async () => {
-    const middleware = spy(() => Promise.resolve())
-    const { err, req, res, next } = await run(null, middleware)
-    expect(err).to.be.null
-    expect(req).to.be.an.instanceOf(Request)
-    expect(res).to.be.an.instanceOf(Response)
-    expect(next).to.be.a('function')
-  })
-
-  it('resolves an async middleware and calls a callback', done => {
-    const middleware = spy(() => Promise.resolve())
-    run(null, middleware, (err, req, res, next) => {
-      expect(err).to.be.null
-      expect(req).to.be.an.instanceOf(Request)
-      expect(res).to.be.an.instanceOf(Response)
       expect(next).to.be.a('function')
-      done()
-    })
+      next()
+    }
+    run(setup, function middleware() {}, done)
   })
 
   it('captures the error passed to next', done => {
@@ -85,6 +63,34 @@ describe('run', () => {
       expect(err).to.have.property('message', 'oops')
       done()
     })
+  })
+
+  it('supports error handlers', done => {
+    const setup = (req, res, next) => next(new Error('oops'))
+    // eslint-disable-next-line no-unused-vars
+    const middleware = (err, req, res, next) => {
+      expect(err).to.have.property('message', 'oops')
+      next()
+    }
+    run(setup, middleware, done)
+  })
+
+  it('supports async middleware', () => {
+    const middleware = wrap(async (req, res, next) => next())
+    return run(null, middleware, (err, req, res) => {
+      expect(req).to.be.an.instanceOf(Request)
+      expect(res).to.be.an.instanceOf(Response)
+    })
+  })
+
+  it('rejects async middlware that does not handle errors', () => {
+    const middleware = () => Promise.reject(new Error('oops'))
+    return run(null, middleware)
+      .catch(err => err)
+      .then(err => {
+        expect(err).to.be.an.instanceOf(ExpressUnitError)
+        expect(err.toString()).to.include('unhandled rejection')
+      })
   })
 
 })
