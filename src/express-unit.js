@@ -42,13 +42,20 @@ export function run(setup, middleware, done) {
   return Promise
     .resolve(result)
     .then(() => {
-      if (typeof done === 'function') {
-        done(err, req, res)
-        return
+      if (typeof done !== 'function') {
+        return [err, req, res]
       }
-      return [err, req, res]
+      try {
+        done(err, req, res)
+      }
+      catch (err) {
+        return Promise.reject(new ExpressUnitError(err))
+      }
     })
     .catch(err => {
+      if (err instanceof ExpressUnitError) {
+        return Promise.reject(err.err)
+      }
       const message = 'unhandled rejection in middleware'
       const error = new ExpressUnitError(err, message)
       return Promise.reject(error)
@@ -58,9 +65,9 @@ export function run(setup, middleware, done) {
 export class ExpressUnitError extends Error {
   constructor(err, message) {
     super(message)
-    this.err = JSON.stringify(err, null, 2)
+    this.err = err
   }
   toString() {
-    return `${this.name}: ${this.message}\n${this.err}`
+    return `${this.name}: ${this.message}\n${JSON.stringify(this.err, null, 2)}`
   }
 }

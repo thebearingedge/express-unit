@@ -75,7 +75,16 @@ describe('run', () => {
     run(setup, middleware, done)
   })
 
-  it('supports async middleware', () => {
+  it('supports async middleware', async () => {
+    const middleware = wrap(async (req, res, next) => await next())
+    await run(null, middleware, (err, req, res) => {
+      expect(err).to.be.null
+      expect(req).to.be.an.instanceOf(Request)
+      expect(res).to.be.an.instanceOf(Response)
+    })
+  })
+
+  it('supports spread on async middleware', () => {
     const middleware = wrap(async (req, res, next) => await next())
     return run(null, middleware)
       .spread((err, req, res) => {
@@ -90,6 +99,12 @@ describe('run', () => {
     const err = await run(null, middleware).catch(err => err)
     expect(err).to.be.an.instanceOf(ExpressUnitError)
     expect(err.toString()).to.include('unhandled rejection')
+  })
+
+  it('forwards assertion errors in made in the callback', () => {
+    const middleware = function middleware() {}
+    return run(null, middleware, err => expect(err).to.exist)
+      .catch(err => expect(err).not.to.be.an.instanceOf(ExpressUnitError))
   })
 
 })
