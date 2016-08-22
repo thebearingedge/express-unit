@@ -176,7 +176,6 @@ describe('middleware', () => {
     }
     it('sets the user on locals', async () => {
       const [, , res] = await run(setup, middleware(users))
-      expect(err).to.be.null
       expect(res.locals).to.have.property('user', user)
     })
   })

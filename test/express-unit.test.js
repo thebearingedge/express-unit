@@ -101,7 +101,7 @@ describe('run', () => {
     expect(err.toString()).to.include('unhandled rejection')
   })
 
-  it('forwards assertion errors in made in the callback', () => {
+  it('forwards assertion errors made in the callback', () => {
     const middleware = function middleware() {}
     return run(null, middleware, err => expect(err).to.exist)
       .catch(err => expect(err).not.to.be.an.instanceOf(ExpressUnitError))
