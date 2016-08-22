@@ -75,9 +75,9 @@ describe('run', () => {
     run(setup, middleware, done)
   })
 
-  it('supports async middleware', async () => {
+  it('supports async middleware', () => {
     const middleware = wrap(async (req, res, next) => await next())
-    await run(null, middleware)
+    return run(null, middleware)
       .spread((err, req, res) => {
         expect(err).to.be.null
         expect(req).to.be.an.instanceOf(Request)

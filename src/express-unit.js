@@ -42,11 +42,14 @@ export function run(setup, middleware, done) {
   return Promise
     .resolve(result)
     .then(() => {
-      if (typeof done === 'function') return done(err, req, res)
+      if (typeof done === 'function') {
+        done(err, req, res)
+        return
+      }
       return [err, req, res]
     })
     .catch(err => {
-      const message = 'unhandled rejection or assertion error'
+      const message = 'unhandled rejection in middleware'
       const error = new ExpressUnitError(err, message)
       return Promise.reject(error)
     })
