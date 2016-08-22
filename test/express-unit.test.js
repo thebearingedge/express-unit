@@ -75,22 +75,21 @@ describe('run', () => {
     run(setup, middleware, done)
   })
 
-  it('supports async middleware', () => {
-    const middleware = wrap(async (req, res, next) => next())
-    return run(null, middleware, (err, req, res) => {
-      expect(req).to.be.an.instanceOf(Request)
-      expect(res).to.be.an.instanceOf(Response)
-    })
+  it('supports async middleware', async () => {
+    const middleware = wrap(async (req, res, next) => await next())
+    await run(null, middleware)
+      .spread((err, req, res) => {
+        expect(err).to.be.null
+        expect(req).to.be.an.instanceOf(Request)
+        expect(res).to.be.an.instanceOf(Response)
+      })
   })
 
-  it('rejects async middlware that does not handle errors', () => {
+  it('rejects async middlware that does not handle errors', async () => {
     const middleware = () => Promise.reject(new Error('oops'))
-    return run(null, middleware)
-      .catch(err => err)
-      .then(err => {
-        expect(err).to.be.an.instanceOf(ExpressUnitError)
-        expect(err.toString()).to.include('unhandled rejection')
-      })
+    const err = await run(null, middleware).catch(err => err)
+    expect(err).to.be.an.instanceOf(ExpressUnitError)
+    expect(err.toString()).to.include('unhandled rejection')
   })
 
 })

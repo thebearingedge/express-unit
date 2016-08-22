@@ -1,5 +1,6 @@
-import { request, response } from 'express'
 import Error from 'es6-error'
+import Promise from 'bluebird'
+import { request, response } from 'express'
 
 export function Request() {
   this.app = {}
@@ -41,12 +42,11 @@ export function run(setup, middleware, done) {
   return Promise
     .resolve(result)
     .then(() => {
-      return typeof done === 'function'
-        ? done(err, req, res)
-        : { req, res }
+      if (typeof done === 'function') return done(err, req, res)
+      return [err, req, res]
     })
     .catch(err => {
-      const message = 'unhandled rejection'
+      const message = 'unhandled rejection or assertion error'
       const error = new ExpressUnitError(err, message)
       return Promise.reject(error)
     })

@@ -148,7 +148,7 @@ describe('middleware', () => {
 ```
 
 #### Async
-Express Unit also supports `async` middleware.
+Express Unit also supports `async` middleware. If you totally hate callbacks, use `spread` on the Bluebird promise returned by `run`. Otherwise, you can still pass a callback. Using `async/await` in tests? `await` an array of `[err, req, res]`
 
 ```js
 // middleware.js
@@ -174,10 +174,10 @@ describe('middleware', () => {
       req.params.userId = 1
       next()
     }
-    it('sets the user on locals', () => {
-      return run(setup, middleware(users), (err, req, res) => {
-        expect(res.locals).to.have.property('user', user)
-      })
+    it('sets the user on locals', async () => {
+      const [, , res] = await run(setup, middleware(users))
+      expect(err).to.be.null
+      expect(res.locals).to.have.property('user', user)
     })
   })
 })
