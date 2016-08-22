@@ -32,34 +32,34 @@ export function run(setup, middleware, done) {
 
   let result
 
-  setup(req, res, (_err = null) => {
+  return setup(req, res, (_err = null) => {
+
     err = _err
     result = err
       ? middleware(err, req, res, next)
       : middleware(req, res, next)
+
+    return Promise
+      .resolve(result)
+      .then(() => {
+        if (typeof done !== 'function') return [err, req, res]
+        try {
+          done(err, req, res)
+        }
+        catch (err) {
+          return Promise.reject(new ExpressUnitError(err))
+        }
+      })
+      .catch(err => {
+        if (err instanceof ExpressUnitError) {
+          return Promise.reject(err.err)
+        }
+        const message = 'unhandled rejection in middleware'
+        const error = new ExpressUnitError(err, message)
+        return Promise.reject(error)
+      })
   })
 
-  return Promise
-    .resolve(result)
-    .then(() => {
-      if (typeof done !== 'function') {
-        return [err, req, res]
-      }
-      try {
-        done(err, req, res)
-      }
-      catch (err) {
-        return Promise.reject(new ExpressUnitError(err))
-      }
-    })
-    .catch(err => {
-      if (err instanceof ExpressUnitError) {
-        return Promise.reject(err.err)
-      }
-      const message = 'unhandled rejection in middleware'
-      const error = new ExpressUnitError(err, message)
-      return Promise.reject(error)
-    })
 }
 
 export class ExpressUnitError extends Error {

@@ -68,7 +68,7 @@ import myMiddleware from './my-middleware'
 
 describe('myMiddleware', () => {
   it('gets called!', () => {
-    const setup = spy()
+    const setup = spy((req, res, next) => next())
     const middleware = spy(myMiddleware)
     run(setup, middleware)
     expect(setup).to.have.been.calledBefore(middleware)
@@ -132,14 +132,13 @@ export default function middleware(req, res, next) {
 describe('middleware', () => {
   context('when the request has a token header', () => {
     const setup = (req, res, next) => {
-      req.headers['x-access-token'] = 'myToken'
       stub(res, 'send')
       next()
     }
     it('sends a compliment', done => {
       run(setup, middleware, (err, req, res) => {
-        expect(err).to.be.null
-        expect(res.send).to.have.been.calledWith('you are a nice person')
+        expect(err).to.have.property('message', 'get outta here!')
+        expect(res.send).not.to.have.been.called
         done()
       })
     })
@@ -148,7 +147,7 @@ describe('middleware', () => {
 ```
 
 #### Async
-Express Unit also supports `async` middleware. If you totally hate callbacks, use `spread` on the Bluebird promise returned by `run`. Otherwise, you can still pass a callback. Using `async/await` in tests? `await` an array of `[err, req, res]`
+Express Unit also supports `async` middleware. If you totally hate callbacks, use `spread` on the Bluebird promise returned by `express-unit`. Otherwise, you can still pass a callback. Using `async/await` in tests? `await` an array of `[err, req, res]`.
 
 ```js
 // middleware.js
