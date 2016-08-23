@@ -12,13 +12,13 @@ export function Request() {
   this.cookies = {}
   this.signedCookies = {}
 }
-Request.prototype = request
+Request.prototype = Object.create(request)
 
 export function Response() {
   this.app = {},
   this.locals = {}
 }
-Response.prototype = response
+Response.prototype = Object.create(response)
 
 export function run(setup, middleware, done) {
 
@@ -30,12 +30,10 @@ export function run(setup, middleware, done) {
 
   setup = setup || ((req, res, next) => next())
 
-  let result
-
   return setup(req, res, (_err = null) => {
 
     err = _err
-    result = err
+    const result = err
       ? middleware(err, req, res, next)
       : middleware(req, res, next)
 
