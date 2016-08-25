@@ -121,4 +121,13 @@ describe('run', () => {
       })
   })
 
+  it('resolves an array of results', async () => {
+    const setup = (req, res, next) => next()
+    const middleware = wrap(async (req, res, next) => next())
+    const [ err, req, res ] = await run(setup, middleware)
+    expect(err).to.be.null
+    expect(req).to.be.an.instanceOf(Request)
+    expect(res).to.be.an.instanceOf(Response)
+  })
+
 })

@@ -1,6 +1,6 @@
 {
   "name": "express-unit",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "",
   "main": "index.js",
   "files": [
@@ -58,8 +58,6 @@
     "express": "4.x"
   },
   "dependencies": {
-    "bluebird": "3.4.1",
-    "es6-error": "3.0.1",
-    "native-promise-only": "0.8.1"
+    "es6-error": "3.0.1"
   }
 }

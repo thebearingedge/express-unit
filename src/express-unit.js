@@ -1,5 +1,4 @@
 import Error from 'es6-error'
-import Promise from 'native-promise-only'
 import { request, response } from 'express'
 
 export function Request() {
@@ -34,9 +33,9 @@ export function run(setup, middleware, done) {
 
     err = _err
 
-    const result = middleware.length === 4
-      ? middleware(err, req, res, next)
-      : middleware(req, res, next)
+    const result = middleware.length <= 3
+      ? middleware(req, res, next)
+      : middleware(err, req, res, next)
 
     if (!isPromise(result)) {
       return isFunction(done)
