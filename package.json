@@ -51,7 +51,6 @@
     "global": "4.3.0",
     "mocha": "3.0.2",
     "sinon": "1.17.5",
-    "sinon-as-promised": "4.0.2",
     "sinon-chai": "2.8.0"
   },
   "peerDependencies": {
