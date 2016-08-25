@@ -29,7 +29,9 @@ export function run(setup, middleware, done) {
 
   setup = setup || ((req, res, next) => next())
 
-  return setup(req, res, (_err = null) => {
+  let promise
+
+  setup(req, res, (_err = null) => {
 
     err = _err
 
@@ -43,7 +45,7 @@ export function run(setup, middleware, done) {
         : undefined
     }
 
-    return SpreadablePromise
+    promise = SpreadablePromise
       .resolve(result)
       .then(() => {
         if (!isFunction(done)) return [err, req, res]
@@ -64,6 +66,7 @@ export function run(setup, middleware, done) {
       })
   })
 
+  return promise
 }
 
 export class ExpressUnitError extends Error {
