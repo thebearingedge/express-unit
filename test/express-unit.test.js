@@ -1,6 +1,6 @@
 import { describe, it } from 'global'
 import wrap from 'express-async-wrap'
-import { expect, spy, stub } from './__setup__'
+import { expect, spy, stub, AssertionError } from './__setup__'
 import { run, Request, Response, ExpressUnitError } from '../src/express-unit'
 
 describe('run', () => {
@@ -103,8 +103,22 @@ describe('run', () => {
 
   it('forwards assertion errors made in the callback', () => {
     const middleware = function middleware() {}
-    return run(null, middleware, err => expect(err).to.exist)
-      .catch(err => expect(err).not.to.be.an.instanceOf(ExpressUnitError))
+    try {
+      run(null, middleware, err => expect(err).to.exist)
+    }
+    catch (err) {
+      expect(err).not.to.be.an.instanceOf(ExpressUnitError)
+      expect(err).to.be.an.instanceOf(AssertionError)
+    }
+  })
+
+  it('forwards assertion errors made in the callback to async middleware', done => {
+    const middleware = () => Promise.resolve()
+    run(null, middleware, err => expect(err).to.exist)
+      .catch(err => {
+        expect(err).to.be.an.instanceOf(AssertionError)
+        done()
+      })
   })
 
 })

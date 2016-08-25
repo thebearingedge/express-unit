@@ -1,5 +1,5 @@
 import Error from 'es6-error'
-import Promise from 'bluebird'
+import Promise from 'native-promise-only'
 import { request, response } from 'express'
 
 export function Request() {
@@ -33,14 +33,21 @@ export function run(setup, middleware, done) {
   return setup(req, res, (_err = null) => {
 
     err = _err
-    const result = err
+
+    const result = middleware.length === 4
       ? middleware(err, req, res, next)
       : middleware(req, res, next)
 
-    return Promise
+    if (!isPromise(result)) {
+      return isFunction(done)
+        ? done(err, req, res)
+        : undefined
+    }
+
+    return SpreadablePromise
       .resolve(result)
       .then(() => {
-        if (typeof done !== 'function') return [err, req, res]
+        if (!isFunction(done)) return [err, req, res]
         try {
           done(err, req, res)
         }
@@ -68,4 +75,18 @@ export class ExpressUnitError extends Error {
   toString() {
     return `${this.name}: ${this.message}\n${JSON.stringify(this.err, null, 2)}`
   }
+}
+
+class SpreadablePromise extends Promise {
+  spread(fn) {
+    return this.then(arr => fn(...arr))
+  }
+}
+
+function isFunction(obj) {
+  return typeof obj === 'function'
+}
+
+function isPromise(obj) {
+  return obj && isFunction(obj.then)
 }

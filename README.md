@@ -87,11 +87,9 @@ If for some reason you don't want to supply a setup, just pass `null`.
 // middleware.js
 export default function middleware(req, res, next) {
   const token = req.get('x-access-token')
-  if (!token) {
-    const err = new Error('where is your token?')
-    return next(err)
-  }
-  next()
+  if (token) return next()
+  const err = new Error('where is your token?')
+  next(err)
 }
 ```
 
@@ -119,11 +117,9 @@ Express Unit supports callbacks. Pass a callback as the third argument to inspec
 // middleware.js
 export default function middleware(req, res, next) {
   const token = req.get('x-access-token')
-  if (!token) {
-    const err = new Error('get outta here!')
-    return next(err)
-  }
-  res.send('you are a nice person')
+  if (token) return res.send('you are a nice person')
+  const err = new Error('get outta here!')
+  return next(err)
 }
 ```
 

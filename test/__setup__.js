@@ -5,7 +5,7 @@ import 'sinon-as-promised'
 
 chai.use(sinonChai)
 
-const { expect } = chai
+const { expect, AssertionError } = chai
 const { spy, stub } = sinon
 
-export { expect, spy, stub }
+export { expect, spy, stub, AssertionError }

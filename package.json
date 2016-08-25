@@ -59,6 +59,7 @@
   },
   "dependencies": {
     "bluebird": "3.4.1",
-    "es6-error": "3.0.1"
+    "es6-error": "3.0.1",
+    "native-promise-only": "0.8.1"
   }
 }
