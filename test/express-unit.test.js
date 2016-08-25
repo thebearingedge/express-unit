@@ -112,7 +112,7 @@ describe('run', () => {
     }
   })
 
-  it('forwards assertion errors made in the callback to async middleware', done => {
+  it('forwards assertion errors in the callback to async middleware', done => {
     const middleware = () => Promise.resolve()
     run(null, middleware, err => expect(err).to.exist)
       .catch(err => {
