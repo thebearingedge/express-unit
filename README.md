@@ -143,7 +143,7 @@ describe('middleware', () => {
 ```
 
 #### Async
-Express Unit also supports `async` middleware. If you totally hate callbacks, use `spread` on the Bluebird promise returned by `express-unit`. Otherwise, you can still pass a callback. Using `async/await` in tests? `await` an array of `[err, req, res]`.
+Express Unit also supports `async` middleware. If you totally hate callbacks, use `spread` on the promise returned by `express-unit`. Otherwise, you can still pass a callback. Using `async/await` in tests? `await` an array of `[err, req, res]`.
 
 ```js
 // middleware.js
