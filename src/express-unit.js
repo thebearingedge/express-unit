@@ -90,5 +90,5 @@ function isFunction(obj) {
 }
 
 function isPromise(obj) {
-  return obj && isFunction(obj.then)
+  return obj && typeof obj === 'object' && isFunction(obj.then)
 }
