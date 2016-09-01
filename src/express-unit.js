@@ -27,7 +27,6 @@ export function run(setup, middleware, done) {
   const res = new Response()
 
   let err = null
-  let promise
 
   const finish = (_err = null) => {
     err = _err
@@ -39,6 +38,8 @@ export function run(setup, middleware, done) {
       res[property] = () => finish()
     }
   }
+
+  let promise
 
   setup(req, res, (_err = null) => {
     err = _err
