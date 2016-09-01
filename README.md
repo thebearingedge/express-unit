@@ -63,7 +63,7 @@ Express Unit is a helper function for running a single middleware. To use, just 
 
 ```js
 import run from 'express-unit'
-import { expect, spy, stub } from './test-utils'
+import { expect, spy } from './test-utils'
 import myMiddleware from './my-middleware'
 
 describe('myMiddleware', () => {
@@ -77,7 +77,7 @@ describe('myMiddleware', () => {
 ```
 
 #### Setup
-Your setup function will be called with a `req`, `res`, and `next` to prepare the request lifecycle for your middleware. This is your opportunity to stub out any relevant methods on `req` or `res`. Call `next` to execute your middleware.
+Your setup function will be called with a `req`, `res`, and `next` to prepare the request lifecycle for your middleware. This is your opportunity to spy on any relevant methods on `req` or `res`. Call `next` to execute your middleware.
 
 If for some reason you don't want to supply a setup, just pass `null`.
 
@@ -128,7 +128,7 @@ export default function middleware(req, res, next) {
 describe('middleware', () => {
   context('when the request has a token header', () => {
     const setup = (req, res, next) => {
-      stub(res, 'send')
+      spy(res, 'send')
       next()
     }
     it('sends a compliment', done => {

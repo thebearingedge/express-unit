@@ -13,7 +13,7 @@
   },
   "scripts": {
     "lint": "eslint src test",
-    "test": "mocha -r babel-register",
+    "test": "mocha -r babel-register -t 200",
     "tdd": "npm -s test -- -w -R min",
     "cover": "babel-node node_modules/.bin/babel-istanbul cover _mocha",
     "clean": "rimraf dist",

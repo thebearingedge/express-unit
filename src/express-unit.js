@@ -34,6 +34,12 @@ export function run(setup, middleware, done) {
     isFunction(done) && done(err, req, res)
   }
 
+  for (let property in res) {
+    if (isFunction(res[property])) {
+      res[property] = () => finish()
+    }
+  }
+
   setup(req, res, (_err = null) => {
     err = _err
     promise = middleware.length <= 3
@@ -41,12 +47,7 @@ export function run(setup, middleware, done) {
       : middleware(err, req, res, finish)
   })
 
-  if (!isPromise(promise)) {
-    if (middleware.length <= 2 && isFunction(done)) {
-      return done(err, req, res)
-    }
-    return
-  }
+  if (!isPromise(promise)) return
 
   return SpreadablePromise
     .resolve(promise)

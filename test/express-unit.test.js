@@ -1,6 +1,6 @@
 import { describe, it } from 'global'
 import wrap from 'express-async-wrap'
-import { expect, spy, stub, AssertionError } from './__setup__'
+import { expect, spy, AssertionError } from './__setup__'
 import { run, Request, Response, ExpressUnitError } from '../src/express-unit'
 
 describe('express-unit', () => {
@@ -28,7 +28,7 @@ describe('express-unit', () => {
 
   it('calls a callback after invoking a middleware', done => {
     const setup = (req, res, next) => {
-      stub(res, 'send')
+      spy(res, 'send')
       next()
     }
     const middleware = (req, res) => res.send('hola!')
@@ -54,7 +54,8 @@ describe('express-unit', () => {
       expect(next).to.be.a('function')
       next()
     }
-    run(setup, function middleware() {}, done)
+    const middleware = (req, res, next) => next()
+    run(setup, middleware, done)
   })
 
   it('captures the error passed to next', done => {
@@ -84,6 +85,21 @@ describe('express-unit', () => {
     run(null, middleware, (err, req, res) => {
       expect(err).to.be.null
       expect(res.locals.user).to.equal(user)
+      done()
+    })
+  })
+
+  it('calls a callback after middleware invokes a response method', done => {
+    const setup = (req, res, next) => {
+      spy(res, 'send')
+      next()
+    }
+    const middleware = (req, res) => setTimeout(() => {
+      res.send('hi')
+    })
+    run(setup, middleware, (err, req, res) => {
+      expect(err).to.be.null
+      expect(res.send).to.have.been.calledWith('hi')
       done()
     })
   })
