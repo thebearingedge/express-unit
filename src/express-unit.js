@@ -19,6 +19,8 @@ export function Response() {
 }
 Response.prototype = Object.create(response)
 
+const chainables = ['status', 'vary']
+
 export function run(setup, middleware, done) {
 
   setup = setup || ((req, res, next) => next())
@@ -35,7 +37,10 @@ export function run(setup, middleware, done) {
 
   for (let property in res) {
     if (isFunction(res[property])) {
-      res[property] = () => finish()
+      res[property] = () => {
+        if (chainables.includes(property)) return res
+        finish()
+      }
     }
   }
 
