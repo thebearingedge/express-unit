@@ -21,56 +21,52 @@ Response.prototype = Object.create(response)
 
 export function run(setup, middleware, done) {
 
-  let err = null
+  setup = setup || ((req, res, next) => next())
 
   const req = new Request()
   const res = new Response()
-  const next = (_err = null) => (err = _err)
 
-  setup = setup || ((req, res, next) => next())
-
+  let err = null
   let promise
 
-  setup(req, res, (_err = null) => {
-
+  const finish = (_err = null) => {
     err = _err
+    isFunction(done) && done(err, req, res)
+  }
 
-    const result = middleware.length <= 3
-      ? middleware(req, res, next)
-      : middleware(err, req, res, next)
-
-    if (!isPromise(result)) {
-      return isFunction(done)
-        ? done(err, req, res)
-        : undefined
-    }
-
-    promise = SpreadablePromise
-      .resolve(result)
-      .then(() => {
-        if (!isFunction(done)) return [err, req, res]
-        try {
-          done(err, req, res)
-        }
-        catch (err) {
-          return Promise.reject(new ExpressUnitError(err))
-        }
-      })
-      .catch(err => {
-        if (err instanceof ExpressUnitError) {
-          return Promise.reject(err.err)
-        }
-        const message = 'unhandled rejection in middleware'
-        const error = new ExpressUnitError(err, message)
-        return Promise.reject(error)
-      })
+  setup(req, res, (_err = null) => {
+    err = _err
+    promise = middleware.length <= 3
+      ? middleware(req, res, finish)
+      : middleware(err, req, res, finish)
   })
 
-  return promise
+  if (!isPromise(promise)) {
+    if (middleware.length <= 2 && isFunction(done)) {
+      return done(err, req, res)
+    }
+    return
+  }
+
+  return SpreadablePromise
+    .resolve(promise)
+    .then(() => {
+      if (!isFunction(done)) return [err, req, res]
+      try {
+        done(err, req, res)
+      }
+      catch(err) {
+        throw new ExpressUnitError(null, err)
+      }
+    })
+    .catch(err => {
+      if (err instanceof ExpressUnitError) throw err.err
+      throw new ExpressUnitError('Unhandled rejection in middleware', err)
+    })
 }
 
 export class ExpressUnitError extends Error {
-  constructor(err, message) {
+  constructor(message, err) {
     super(message)
     this.err = err
   }

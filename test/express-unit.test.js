@@ -3,7 +3,7 @@ import wrap from 'express-async-wrap'
 import { expect, spy, stub, AssertionError } from './__setup__'
 import { run, Request, Response, ExpressUnitError } from '../src/express-unit'
 
-describe('run', () => {
+describe('express-unit', () => {
 
   it('invokes a middleware', () => {
     const middleware = spy(function middleware() {})
@@ -75,6 +75,19 @@ describe('run', () => {
     run(setup, middleware, done)
   })
 
+  it('calls a callback after middleware invokes next', done => {
+    const user = { id: 1 }
+    const middleware = (req, res, next) => setTimeout(() => {
+      res.locals.user = user
+      next()
+    })
+    run(null, middleware, (err, req, res) => {
+      expect(err).to.be.null
+      expect(res.locals.user).to.equal(user)
+      done()
+    })
+  })
+
   it('supports async middleware', async () => {
     const middleware = wrap(async (req, res, next) => await next())
     await run(null, middleware, (err, req, res) => {
@@ -98,7 +111,7 @@ describe('run', () => {
     const middleware = () => Promise.reject(new Error('oops'))
     const err = await run(null, middleware).catch(err => err)
     expect(err).to.be.an.instanceOf(ExpressUnitError)
-    expect(err.toString()).to.include('unhandled rejection')
+    expect(err.toString()).to.include('Unhandled rejection')
   })
 
   it('forwards assertion errors made in the callback', () => {
