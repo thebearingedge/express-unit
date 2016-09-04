@@ -143,7 +143,7 @@ describe('middleware', () => {
 ```
 
 #### Async
-Express Unit also supports `async` middleware. If you totally hate callbacks, use `spread` on the promise returned by `express-unit`. Otherwise, you can still pass a callback. Using `async/await` in tests? `await` an array of `[err, req, res]`.
+Express Unit also supports `async` middleware. This is any middleware that is an `async` function or simply returns a `Promise`. `express-unit` will resolve an array of `[err, req, res]` that you can either `await` or receive in a call to `then`.
 
 ```js
 // middleware.js

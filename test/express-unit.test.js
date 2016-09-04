@@ -87,16 +87,6 @@ describe('express-unit', () => {
     })
   })
 
-  it('supports spread on async/await middleware', () => {
-    const middleware = wrap(async (req, res, next) => await next())
-    return run(null, middleware)
-      .spread((err, req, res) => {
-        expect(err).to.be.null
-        expect(req).to.be.an.instanceOf(Request)
-        expect(res).to.be.an.instanceOf(Response)
-      })
-  })
-
   it('rejects async/await middlware that does not handle errors', async () => {
     const middleware = () => Promise.reject(new Error('oops'))
     const err = await run(null, middleware).catch(err => err)

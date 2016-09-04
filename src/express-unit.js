@@ -52,7 +52,7 @@ export function run(setup, middleware, done) {
 
   if (!isPromise(promise)) return
 
-  return Spreadable
+  return Promise
     .resolve(promise)
     .then(() => {
       if (!isFunction(done)) return [err, req, res]
@@ -77,12 +77,6 @@ export class ExpressUnitError extends Error {
   toString() {
     const { name, message, err } = this
     return `${name}: ${message}\n${JSON.stringify(err, null, 2)}`
-  }
-}
-
-class Spreadable extends Promise {
-  spread(callback) {
-    return this.then(arr => callback(...arr))
   }
 }
 
