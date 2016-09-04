@@ -1,6 +1,6 @@
 {
   "name": "express-unit",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "",
   "main": "index.js",
   "files": [
@@ -17,7 +17,7 @@
     "tdd": "npm -s test -- -w -R min",
     "cover": "babel-node node_modules/.bin/babel-istanbul cover _mocha",
     "transpile": "rimraf dist && babel src -d dist",
-    "ship": "run-s lint test transpile publish"
+    "ship": "run lint && npm run test && npm run transpile && npm publish"
   },
   "repository": {
     "type": "git",
