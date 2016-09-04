@@ -5,37 +5,10 @@ import { run, Request, Response, ExpressUnitError } from '../src/express-unit'
 
 describe('express-unit', () => {
 
-  it('invokes a middleware', () => {
+  it('runs a middleware', () => {
     const middleware = spy(function middleware() {})
     run(null, middleware)
     expect(middleware).to.have.been.called
-  })
-
-  it('calls a setup function before running middleware', () => {
-    const setup = spy(function setup(req, res, next) {
-      req.headers['foo'] = 'bar'
-      res.locals.id = 1
-      next()
-    })
-    const middleware = spy(function middleware(req, res, next) {
-      expect(req.get('foo')).to.equal('bar')
-      expect(res.locals).to.have.property('id', 1)
-      expect(next).to.be.a('function')
-    })
-    run(setup, middleware)
-    expect(setup).to.have.been.calledBefore(middleware)
-  })
-
-  it('calls a callback after invoking a middleware', done => {
-    const setup = (req, res, next) => {
-      spy(res, 'send')
-      next()
-    }
-    const middleware = (req, res) => res.send('hola!')
-    run(setup, middleware, (err, req, res) => {
-      expect(res.send).to.have.been.calledWith('hola!')
-      done()
-    })
   })
 
   it('calls a setup function with a req, res, and next', done => {
@@ -52,13 +25,24 @@ describe('express-unit', () => {
       expect(res.app).to.be.an('object')
       expect(res.locals).to.be.an('object')
       expect(next).to.be.a('function')
-      next()
+      done()
     }
-    const middleware = (req, res, next) => next()
-    run(setup, middleware, done)
+    run(setup)
   })
 
-  it('captures the error passed to next', done => {
+  it('runs a setup function before running a middleware', () => {
+    const setup = spy((req, res, next) => next())
+    const middleware = spy(_ => _)
+    run(setup, middleware)
+    expect(setup).to.have.been.calledBefore(middleware)
+  })
+
+  it('calls a callback after running a middleware', done => {
+    const middleware = (req, res, next) => next()
+    run(null, middleware, done)
+  })
+
+  it('forwards errors from middleware to callback', done => {
     const middleware = (req, res, next) => next(new Error('oops'))
     run(null, middleware, err => {
       expect(err).to.have.property('message', 'oops')
@@ -66,64 +50,44 @@ describe('express-unit', () => {
     })
   })
 
-  it('supports error handlers', done => {
+  it('calls a callback after a response method is called', done => {
+    const middleware = (req, res) => res.end()
+    run(null, middleware, done)
+  })
+
+  it('supports error handling middleware', done => {
     const setup = (req, res, next) => next(new Error('oops'))
     // eslint-disable-next-line no-unused-vars
     const middleware = (err, req, res, next) => {
       expect(err).to.have.property('message', 'oops')
-      next()
+      done()
     }
-    run(setup, middleware, done)
+    run(setup, middleware)
   })
 
   it('supports chainable response methods', done => {
-    const middleware = (req, res) => {
-      res.status(201).end()
-    }
+    const middleware = (req, res) => res.status(201).end()
     run(null, middleware, err => {
       expect(err).not.to.exist
       done()
     })
   })
 
-  it('calls a callback after middleware invokes next', done => {
-    const user = { id: 1 }
-    const middleware = (req, res, next) => setTimeout(() => {
-      res.locals.user = user
-      next()
-    })
-    run(null, middleware, (err, req, res) => {
-      expect(err).to.be.null
-      expect(res.locals.user).to.equal(user)
-      done()
-    })
+  it('supports asynchronous middleware', done => {
+    const middleware = (req, res, next) => setTimeout(() => next())
+    run(null, middleware, done)
   })
 
-  it('calls a callback after middleware invokes a response method', done => {
-    const setup = (req, res, next) => {
-      spy(res, 'send')
-      next()
-    }
-    const middleware = (req, res) => setTimeout(() => {
-      res.send('hi')
-    })
-    run(setup, middleware, (err, req, res) => {
-      expect(err).to.be.null
-      expect(res.send).to.have.been.calledWith('hi')
-      done()
-    })
-  })
-
-  it('supports async middleware', async () => {
+  it('supports async/await middleware', async () => {
     const middleware = wrap(async (req, res, next) => await next())
-    await run(null, middleware, (err, req, res) => {
+    return run(null, middleware, (err, req, res) => {
       expect(err).to.be.null
       expect(req).to.be.an.instanceOf(Request)
       expect(res).to.be.an.instanceOf(Response)
     })
   })
 
-  it('supports spread on async middleware', () => {
+  it('supports spread on async/await middleware', () => {
     const middleware = wrap(async (req, res, next) => await next())
     return run(null, middleware)
       .spread((err, req, res) => {
@@ -133,37 +97,24 @@ describe('express-unit', () => {
       })
   })
 
-  it('rejects async middlware that does not handle errors', async () => {
+  it('rejects async/await middlware that does not handle errors', async () => {
     const middleware = () => Promise.reject(new Error('oops'))
     const err = await run(null, middleware).catch(err => err)
     expect(err).to.be.an.instanceOf(ExpressUnitError)
     expect(err.toString()).to.include('Unhandled rejection')
   })
 
-  it('forwards assertion errors made in the callback', () => {
-    const middleware = function middleware() {}
-    try {
-      run(null, middleware, err => expect(err).to.exist)
-    }
-    catch (err) {
-      expect(err).not.to.be.an.instanceOf(ExpressUnitError)
-      expect(err).to.be.an.instanceOf(AssertionError)
-    }
-  })
-
-  it('forwards assertion errors in the callback to async middleware', done => {
+  it('forwards assertion errors in callback to async/await middleware', () => {
     const middleware = () => Promise.resolve()
-    run(null, middleware, err => expect(err).to.exist)
+    return run(null, middleware, err => expect(err).to.exist)
       .catch(err => {
         expect(err).to.be.an.instanceOf(AssertionError)
-        done()
       })
   })
 
   it('resolves an array of results', async () => {
-    const setup = (req, res, next) => next()
     const middleware = wrap(async (req, res, next) => next())
-    const [ err, req, res ] = await run(setup, middleware)
+    const [ err, req, res ] = await run(null, middleware)
     expect(err).to.be.null
     expect(req).to.be.an.instanceOf(Request)
     expect(res).to.be.an.instanceOf(Response)

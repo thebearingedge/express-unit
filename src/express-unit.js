@@ -37,10 +37,7 @@ export function run(setup, middleware, done) {
 
   for (let property in res) {
     if (isFunction(res[property])) {
-      res[property] = () => {
-        if (chainables.includes(property)) return res
-        finish()
-      }
+      res[property] = () => chainables.includes(property) ? res : finish()
     }
   }
 
@@ -55,7 +52,7 @@ export function run(setup, middleware, done) {
 
   if (!isPromise(promise)) return
 
-  return SpreadablePromise
+  return Spreadable
     .resolve(promise)
     .then(() => {
       if (!isFunction(done)) return [err, req, res]
@@ -78,13 +75,14 @@ export class ExpressUnitError extends Error {
     this.err = err
   }
   toString() {
-    return `${this.name}: ${this.message}\n${JSON.stringify(this.err, null, 2)}`
+    const { name, message, err } = this
+    return `${name}: ${message}\n${JSON.stringify(err, null, 2)}`
   }
 }
 
-class SpreadablePromise extends Promise {
-  spread(fn) {
-    return this.then(arr => fn(...arr))
+class Spreadable extends Promise {
+  spread(callback) {
+    return this.then(arr => callback(...arr))
   }
 }
 
