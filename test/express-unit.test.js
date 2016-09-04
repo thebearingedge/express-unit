@@ -76,6 +76,16 @@ describe('express-unit', () => {
     run(setup, middleware, done)
   })
 
+  it('supports chainable response methods', done => {
+    const middleware = (req, res) => {
+      res.status(201).end()
+    }
+    run(null, middleware, err => {
+      expect(err).not.to.exist
+      done()
+    })
+  })
+
   it('calls a callback after middleware invokes next', done => {
     const user = { id: 1 }
     const middleware = (req, res, next) => setTimeout(() => {
