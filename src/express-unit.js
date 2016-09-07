@@ -29,10 +29,12 @@ export function run(setup, middleware, done) {
   const res = new Response()
 
   let err = null
+  let isDone = false
 
   const finish = (_err = null) => {
     err = _err
     isFunction(done) && done(err, req, res)
+    isDone = true
   }
 
   for (let property in res) {
@@ -52,10 +54,9 @@ export function run(setup, middleware, done) {
 
   if (!isPromise(promise)) return
 
-  return Promise
-    .resolve(promise)
+  return promise
     .then(() => {
-      if (!isFunction(done)) return [err, req, res]
+      if (isDone || !isFunction(done)) return [err, req, res]
       try {
         done(err, req, res)
       }

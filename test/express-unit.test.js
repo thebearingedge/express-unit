@@ -110,4 +110,9 @@ describe('express-unit', () => {
     expect(res).to.be.an.instanceOf(Response)
   })
 
+  it('only calls a callback once after async/await middleware', done => {
+    const middleware = wrap(async (req, res, next) => next())
+    run(null, middleware, done)
+  })
+
 })

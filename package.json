@@ -1,6 +1,6 @@
 {
   "name": "express-unit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "files": [
@@ -17,7 +17,7 @@
     "tdd": "npm -s test -- -w -R min",
     "cover": "babel-node node_modules/.bin/babel-istanbul cover _mocha",
     "transpile": "rimraf dist && babel src -d dist",
-    "ship": "npm run lint && npm run test && npm run transpile && npm publish"
+    "precommit": "run-s lint cover transpile"
   },
   "repository": {
     "type": "git",
@@ -48,7 +48,9 @@
     "express": "4.14.0",
     "express-async-wrap": "1.0.0",
     "global": "4.3.0",
+    "husky": "0.11.7",
     "mocha": "3.0.2",
+    "npm-run-all": "3.1.0",
     "sinon": "1.17.5",
     "sinon-chai": "2.8.0"
   },
