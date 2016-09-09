@@ -33,8 +33,8 @@ export function run(setup, middleware, done) {
 
   const finish = (_err = null) => {
     err = _err
-    isFunction(done) && done(err, req, res)
     isDone = true
+    isFunction(done) && done(err, req, res)
   }
 
   for (let property in res) {
@@ -81,10 +81,10 @@ export class ExpressUnitError extends Error {
   }
 }
 
-function isFunction(obj) {
-  return typeof obj === 'function'
+function isFunction(value) {
+  return typeof value === 'function'
 }
 
-function isPromise(obj) {
-  return obj && typeof obj === 'object' && isFunction(obj.then)
+function isPromise(value) {
+  return value && typeof value === 'object' && isFunction(value.then)
 }

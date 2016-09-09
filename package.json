@@ -58,6 +58,6 @@
     "express": "4.x"
   },
   "dependencies": {
-    "es6-error": "3.0.1"
+    "es6-error": "3.1.0"
   }
 }
