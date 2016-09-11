@@ -57,12 +57,11 @@ describe('express-unit', () => {
 
   it('supports error handling middleware', done => {
     const setup = (req, res, next) => next(new Error('oops'))
-    // eslint-disable-next-line no-unused-vars
     const middleware = (err, req, res, next) => {
       expect(err).to.have.property('message', 'oops')
-      done()
+      next()
     }
-    run(setup, middleware)
+    run(setup, middleware, done)
   })
 
   it('supports chainable response methods', done => {
