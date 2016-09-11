@@ -12,11 +12,11 @@
     "npm": ">=3.10.3"
   },
   "scripts": {
-    "lint": "eslint src test",
+    "lint": "eslint src/ test/",
     "test": "mocha -r babel-register -t 200",
     "tdd": "npm -s test -- -w -R min",
     "cover": "babel-node node_modules/.bin/babel-istanbul cover _mocha",
-    "transpile": "rimraf dist && babel src -d dist",
+    "transpile": "rimraf dist/ && babel src -d dist/",
     "precommit": "run-s lint cover transpile"
   },
   "repository": {
