@@ -1,7 +1,8 @@
 import { describe, it } from 'global'
 import wrap from 'express-async-wrap'
+import { request, response } from 'express'
 import { expect, spy, AssertionError } from './__setup__'
-import { run, Request, Response, ExpressUnitError } from '../src/express-unit'
+import { run, ExpressUnitError } from '../src/express-unit'
 
 describe('express-unit', () => {
 
@@ -13,7 +14,7 @@ describe('express-unit', () => {
 
   it('calls a setup function with a req, res, and next', done => {
     const setup = (req, res, next) => {
-      expect(req).to.be.an.instanceOf(Request)
+      expect(Object.getPrototypeOf(req)).to.equal(request)
       expect(req.app).to.be.an('object')
       expect(req.body).to.be.an('object')
       expect(req.cookies).to.be.an('object')
@@ -21,7 +22,7 @@ describe('express-unit', () => {
       expect(req.query).to.be.an('object')
       expect(req.route).to.be.an('object')
       expect(req.signedCookies).to.be.an('object')
-      expect(res).to.be.an.instanceOf(Response)
+      expect(Object.getPrototypeOf(res)).to.equal(response)
       expect(res.app).to.be.an('object')
       expect(res.locals).to.be.an('object')
       expect(next).to.be.a('function')
@@ -81,8 +82,8 @@ describe('express-unit', () => {
     const middleware = wrap(async (req, res, next) => await next())
     return run(null, middleware, (err, req, res) => {
       expect(err).to.be.null
-      expect(req).to.be.an.instanceOf(Request)
-      expect(res).to.be.an.instanceOf(Response)
+      expect(Object.getPrototypeOf(req)).to.equal(request)
+      expect(Object.getPrototypeOf(res)).to.equal(response)
     })
   })
 
@@ -105,8 +106,8 @@ describe('express-unit', () => {
     const middleware = wrap(async (req, res, next) => next())
     const [ err, req, res ] = await run(null, middleware)
     expect(err).to.be.null
-    expect(req).to.be.an.instanceOf(Request)
-    expect(res).to.be.an.instanceOf(Response)
+    expect(Object.getPrototypeOf(req)).to.equal(request)
+    expect(Object.getPrototypeOf(res)).to.equal(response)
   })
 
   it('only calls a callback once after async/await middleware', done => {

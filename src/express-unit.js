@@ -1,23 +1,23 @@
 import Error from 'es6-error'
 import { request, response } from 'express'
 
-export function Request() {
-  this.app = {}
-  this.body = {}
-  this.query = {}
-  this.route = {}
-  this.params = {}
-  this.headers = {}
-  this.cookies = {}
-  this.signedCookies = {}
-}
-Request.prototype = Object.create(request)
+const Request = () => ({
+  __proto__: request,
+  app: {},
+  body: {},
+  query: {},
+  route: {},
+  params: {},
+  headers: {},
+  cookies: {},
+  signedCookies: {}
+})
 
-export function Response() {
-  this.app = {},
-  this.locals = {}
-}
-Response.prototype = Object.create(response)
+const Response = () => ({
+  __proto__: response,
+  app: {},
+  locals: {}
+})
 
 const chainables = ['status', 'vary']
 
@@ -25,8 +25,8 @@ export function run(setup, middleware, done) {
 
   setup = setup || ((req, res, next) => next())
 
-  const req = new Request()
-  const res = new Response()
+  const req = Request()
+  const res = Response()
 
   let err = null
   let isDone = false
