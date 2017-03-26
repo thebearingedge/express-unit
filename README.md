@@ -10,6 +10,8 @@ Express middleware testing made easy.
 `λ npm install express-unit`
 
 ### Contents
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/thebearingedge/express-unit.svg)](https://greenkeeper.io/)
  - [Usage](#usage)
    + [Setup](#setup)
    + [Callbacks](#callbacks)
