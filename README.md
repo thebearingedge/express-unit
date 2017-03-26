@@ -4,6 +4,8 @@ Express middleware testing made easy.
 
 [![Build Status](https://travis-ci.org/thebearingedge/express-unit.svg?branch=master)](https://travis-ci.org/thebearingedge/express-unit.svg?branch=master)
 [![Coverage Status](https://coveralls.io/repos/github/thebearingedge/express-unit/badge.svg?branch=master)](https://coveralls.io/github/thebearingedge/express-unit?branch=master)
+[![Dependency Status](https://david-dm.org/thebearingedge/express-unit.svg)](https://david-dm.org/thebearingedge/express-unit)
+[![Dev Dependency Status](https://david-dm.org/thebearingedge/express-unit/dev-status.svg)](https://david-dm.org/thebearingedge/express-unit)
 
 `λ npm install express-unit`
 
