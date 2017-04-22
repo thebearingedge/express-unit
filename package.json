@@ -37,6 +37,7 @@
   },
   "homepage": "https://github.com/thebearingedge/express-unit#readme",
   "devDependencies": {
+    "babel-eslint": "7.2.2",
     "babel-cli": "6.24.1",
     "babel-eslint": "7.2.1",
     "babel-istanbul": "0.12.2",
