@@ -1,17 +1,18 @@
-Express Unit
+express-unit
 --
+
 Express middleware testing made easy.
 
 [![Build Status](https://travis-ci.org/thebearingedge/express-unit.svg?branch=master)](https://travis-ci.org/thebearingedge/express-unit.svg?branch=master)
 [![Coverage Status](https://coveralls.io/repos/github/thebearingedge/express-unit/badge.svg?branch=master)](https://coveralls.io/github/thebearingedge/express-unit?branch=master)
 [![Dependency Status](https://david-dm.org/thebearingedge/express-unit.svg)](https://david-dm.org/thebearingedge/express-unit)
 [![Dev Dependency Status](https://david-dm.org/thebearingedge/express-unit/dev-status.svg)](https://david-dm.org/thebearingedge/express-unit)
+[![Greenkeeper badge](https://badges.greenkeeper.io/thebearingedge/express-unit.svg)](https://greenkeeper.io/)
 
 `λ npm install express-unit`
 
 ### Contents
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/thebearingedge/express-unit.svg)](https://greenkeeper.io/)
  - [Usage](#usage)
    + [Setup](#setup)
    + [Callbacks](#callbacks)
