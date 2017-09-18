@@ -52,7 +52,7 @@
     "husky": "0.14.0",
     "mocha": "3.4.2",
     "npm-run-all": "4.0.2",
-    "sinon": "2.3.5",
+    "sinon": "3.3.0",
     "sinon-chai": "2.11.0"
   },
   "peerDependencies": {
