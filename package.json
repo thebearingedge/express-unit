@@ -49,8 +49,8 @@
     "express": "4.15.2",
     "express-async-wrap": "1.0.0",
     "global": "4.3.2",
+    "mocha": "3.5.0",
     "husky": "0.14.0",
-    "mocha": "3.4.2",
     "npm-run-all": "4.0.2",
     "sinon": "2.3.5",
     "sinon-chai": "2.11.0"
