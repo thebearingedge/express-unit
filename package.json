@@ -45,7 +45,7 @@
     "babel-preset-node6": "11.0.0",
     "chai": "4.1.0",
     "coveralls": "2.13.1",
-    "eslint": "4.1.0",
+    "eslint": "4.7.1",
     "express": "4.15.2",
     "express-async-wrap": "1.0.0",
     "global": "4.3.2",
