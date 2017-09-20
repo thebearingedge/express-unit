@@ -52,8 +52,8 @@
     "mocha": "3.5.0",
     "husky": "0.14.0",
     "npm-run-all": "4.0.2",
-    "sinon": "2.3.5",
-    "sinon-chai": "2.11.0"
+    "sinon-chai": "2.13.0",
+    "sinon": "2.3.5"
   },
   "peerDependencies": {
     "express": "4.x"
