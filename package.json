@@ -52,7 +52,7 @@
     "npm-run-all": "4.1.0",
     "mocha": "3.5.0",
     "husky": "0.14.0",
-    "sinon-chai": "2.13.0",
+    "sinon-chai": "2.14.0",
     "sinon": "2.3.5"
   },
   "peerDependencies": {
