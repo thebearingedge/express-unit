@@ -16,9 +16,10 @@
     "test": "mocha -r babel-register -t 200",
     "tdd": "npm -s t -- -w -R min",
     "build": "rimraf dist/ && babel src -d dist/",
-    "cover": "nyc --reporter=lcov --reporter=text npm -s t",
+    "cover": "nyc npm -s t",
+    "check": "nyc check-coverage",
     "precommit": "run-s -s lint cover",
-    "prepublishOnly": "run-s -s build"
+    "prepublishOnly": "run-s -s precommit check build"
   },
   "repository": {
     "type": "git",
