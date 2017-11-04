@@ -14,10 +14,11 @@
   "scripts": {
     "lint": "eslint src/ test/",
     "test": "mocha -r babel-register -t 200",
-    "tdd": "npm -s test -- -w -R min",
+    "tdd": "npm -s t -- -w -R min",
+    "build": "rimraf dist/ && babel src -d dist/",
     "cover": "nyc --reporter=lcov --reporter=text npm -s t",
-    "transpile": "rimraf dist/ && babel src -d dist/",
-    "precommit": "run-s lint cover transpile"
+    "precommit": "run-s -s lint cover",
+    "prepublishOnly": "run-s -s build"
   },
   "repository": {
     "type": "git",
