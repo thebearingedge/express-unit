@@ -15,7 +15,7 @@
     "lint": "eslint src/ test/",
     "test": "mocha -r babel-register -t 200",
     "tdd": "npm -s test -- -w -R min",
-    "cover": "babel-node node_modules/.bin/babel-istanbul cover _mocha",
+    "cover": "nyc --reporter=lcov --reporter=text npm -s t",
     "transpile": "rimraf dist/ && babel src -d dist/",
     "precommit": "run-s lint cover transpile"
   },
@@ -38,7 +38,6 @@
   "homepage": "https://github.com/thebearingedge/express-unit#readme",
   "devDependencies": {
     "babel-cli": "6.26.0",
-    "babel-istanbul": "0.12.2",
     "babel-plugin-transform-es2015-modules-commonjs": "6.26.0",
     "babel-register": "6.26.0",
     "chai": "4.1.2",
@@ -54,6 +53,7 @@
     "husky": "0.14.3",
     "mocha": "4.0.1",
     "npm-run-all": "4.1.1",
+    "nyc": "11.3.0",
     "sinon": "4.1.1",
     "sinon-chai": "2.14.0"
   },
