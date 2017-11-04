@@ -60,7 +60,7 @@ export function run(setup, middleware, done) {
       try {
         done(err, req, res)
       }
-      catch(err) {
+      catch (err) {
         throw new ExpressUnitError(null, err)
       }
     })

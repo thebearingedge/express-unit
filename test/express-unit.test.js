@@ -1,4 +1,4 @@
-import { describe, it } from 'global'
+import { describe, it } from 'mocha'
 import wrap from 'express-async-wrap'
 import { request, response } from 'express'
 import { expect, spy, AssertionError } from './__setup__'
@@ -9,7 +9,7 @@ describe('express-unit', () => {
   it('runs a middleware', () => {
     const middleware = spy(function middleware() {})
     run(null, middleware)
-    expect(middleware).to.have.been.called
+    expect(middleware).to.have.callCount(1)
   })
 
   it('calls a setup function with a req, res, and next', done => {
@@ -68,7 +68,7 @@ describe('express-unit', () => {
   it('supports chainable response methods', done => {
     const middleware = (req, res) => res.status(201).end()
     run(null, middleware, err => {
-      expect(err).not.to.exist
+      expect(err).to.equal(null)
       done()
     })
   })
@@ -79,9 +79,9 @@ describe('express-unit', () => {
   })
 
   it('supports async/await middleware', async () => {
-    const middleware = wrap(async (req, res, next) => await next())
+    const middleware = wrap(async (req, res, next) => next())
     return run(null, middleware, (err, req, res) => {
-      expect(err).to.be.null
+      expect(err).to.equal(null)
       expect(Object.getPrototypeOf(req)).to.equal(request)
       expect(Object.getPrototypeOf(res)).to.equal(response)
     })
@@ -96,7 +96,7 @@ describe('express-unit', () => {
 
   it('forwards assertion errors in callback to async/await middleware', () => {
     const middleware = () => Promise.resolve()
-    return run(null, middleware, err => expect(err).to.exist)
+    return run(null, middleware, err => expect(err).to.be.an('error'))
       .catch(err => {
         expect(err).to.be.an.instanceOf(AssertionError)
       })
@@ -105,7 +105,7 @@ describe('express-unit', () => {
   it('resolves an array of results', async () => {
     const middleware = wrap(async (req, res, next) => next())
     const [ err, req, res ] = await run(null, middleware)
-    expect(err).to.be.null
+    expect(err).to.equal(null)
     expect(Object.getPrototypeOf(req)).to.equal(request)
     expect(Object.getPrototypeOf(res)).to.equal(response)
   })
