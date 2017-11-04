@@ -18,7 +18,9 @@
     "build": "rimraf dist/ && babel src -d dist/",
     "cover": "nyc npm -s t",
     "check": "nyc check-coverage",
-    "precommit": "run-s -s lint cover",
+    "report": "codecov",
+    "precommit": "run-p -s lint cover",
+    "travis": "run-s -s lint cover check",
     "prepublishOnly": "run-s -s precommit check build"
   },
   "repository": {
@@ -43,7 +45,7 @@
     "babel-plugin-transform-es2015-modules-commonjs": "6.26.0",
     "babel-register": "6.26.0",
     "chai": "4.1.2",
-    "coveralls": "3.0.0",
+    "codecov": "3.0.0",
     "eslint": "4.10.0",
     "eslint-config-standard": "10.2.1",
     "eslint-plugin-import": "2.8.0",
@@ -64,5 +66,6 @@
   },
   "dependencies": {
     "es6-error": "^4.0.2"
-  }
+  },
+  "false": {}
 }
