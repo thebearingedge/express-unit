@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-  - "6.3.1"
-script: "npm run cover"
+  - "8.0.0"
 before_script: "npm install express"
+script: "npm run cover"
 after_script: "cat coverage/lcov.info | node_modules/coveralls/bin/coveralls.js"
