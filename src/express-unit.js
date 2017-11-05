@@ -21,7 +21,7 @@ const Response = () => ({
 
 const chainables = ['status', 'vary']
 
-export async function run(setup, middleware, callback) {
+export function run(setup, middleware, callback) {
 
   setup = setup || ((req, res, next) => next())
 
@@ -54,20 +54,20 @@ export async function run(setup, middleware, callback) {
 
   if (!isPromise(promise)) return
 
-  try {
-    await promise
-    if (nextCalled || !isFunction(callback)) return [err, req, res]
-    try {
-      callback(err, req, res)
-    }
-    catch (err) {
-      throw new ExpressUnitError(null, err)
-    }
-  }
-  catch (err) {
-    if (err instanceof ExpressUnitError) throw err.err
-    throw new ExpressUnitError('Unhandled rejection in middleware', err)
-  }
+  return promise
+    .then(() => {
+      if (nextCalled || !isFunction(callback)) return [err, req, res]
+      try {
+        callback(err, req, res)
+      }
+      catch (err) {
+        throw new ExpressUnitError(null, err)
+      }
+    })
+    .catch(err => {
+      if (err instanceof ExpressUnitError) throw err.err
+      throw new ExpressUnitError('Unhandled rejection in middleware', err)
+    })
 }
 
 export class ExpressUnitError extends Error {
