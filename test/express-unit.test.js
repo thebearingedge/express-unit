@@ -74,11 +74,11 @@ describe('express-unit', () => {
   })
 
   it('supports asynchronous middleware', done => {
-    const middleware = (req, res, next) => setTimeout(() => next())
+    const middleware = (req, res, next) => process.nextTick(() => next())
     run(null, middleware, done)
   })
 
-  it('supports async/await middleware', async () => {
+  it('supports async wrapped middleware', async () => {
     const middleware = wrap(async (req, res, next) => next())
     return run(null, middleware, (err, req, res) => {
       expect(err).to.equal(null)
@@ -87,22 +87,26 @@ describe('express-unit', () => {
     })
   })
 
-  it('rejects async/await middlware that does not handle errors', async () => {
+  it('fails Promise middlware that rejects', async () => {
     const middleware = () => Promise.reject(new Error('oops'))
     const err = await run(null, middleware).catch(err => err)
     expect(err).to.be.an.instanceOf(ExpressUnitError)
     expect(err.toString()).to.include('Unhandled rejection')
   })
 
-  it('forwards assertion errors in callback to async/await middleware', () => {
+  it('propagates assertion errors in callback to Promise middleware', async () => {
     const middleware = () => Promise.resolve()
-    return run(null, middleware, err => expect(err).to.be.an('error'))
-      .catch(err => {
-        expect(err).to.be.an.instanceOf(AssertionError)
-      })
+    let err = null
+    try {
+      await run(null, middleware, err => expect(err).to.be.an('error'))
+    }
+    catch (e) {
+      err = e
+    }
+    expect(err).to.be.an.instanceOf(AssertionError)
   })
 
-  it('resolves an array of results', async () => {
+  it('resolves an array of err, req, and res', async () => {
     const middleware = wrap(async (req, res, next) => next())
     const [ err, req, res ] = await run(null, middleware)
     expect(err).to.equal(null)
@@ -110,7 +114,7 @@ describe('express-unit', () => {
     expect(Object.getPrototypeOf(res)).to.equal(response)
   })
 
-  it('only calls a callback once after async/await middleware', done => {
+  it('calls a callback once after async/await middleware', done => {
     const middleware = wrap(async (req, res, next) => next())
     run(null, middleware, done)
   })
