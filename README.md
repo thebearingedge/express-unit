@@ -22,17 +22,29 @@ Express middleware testing made easy.
 
 ### Usage
 
-Express Unit exports a helper function for running a single middleware. To use, just `import` it and pass it a `setup` function, your `middleware`, and an optional callback.
+Express Unit exports a helper function for running a single middleware. To use, just `import` it and pass it a `setup` function, your `middleware`, and an optional `callback`.
 
 ```js
-run(setup, middleware[, callback])
+import { run } from 'express-unit'
+
+run(setup|null, middleware[, callback])
 ```
 
 #### Parameters
 
-- `setup` - A function defined to set up the Request/Response lifecycle _before_ it enters `middelware`. Pass `null` if not needed.
-- `middleware` - The middleware under test.
-- `callback` - Optional function used to inspect the result of passing the Request/Response lifecycle through `middleware`.
+- `setup` - A function defined to set up the Request/Response lifecycle _before_ it enters `middleware`. Pass `null` if not needed. `setup` is called with three arguments:
+  - `req` - A dummy `Request` object.
+  - `res` - A dummy `Response` object.
+  - `next` - A function used to proceed to `middleware`.
+- `middleware` - The middleware function under test. Passed different arguments depending on whether it is an ["error handling" middleware](http://expressjs.com/en/guide/error-handling.html).
+  - `err` - forwarded from `next(err)` in `setup` if the middleware is an error handler.
+  - `req` - The dummy `Request` object visited by `setup`.
+  - `res` - The dummy `Response` object visited by `setup`.
+  - `next` - A function used to signal the completion of the `middlware`.
+- `callback` - An optional function used to inspect the outcome of passing the Request/Response lifecycle through `setup` and `middleware`.
+  - `err` - Forwarded from `next(err)` in `middleware` (if any).
+  - `req` - The dummy `Response` object visited by `setup` and `middleware`.
+  - `res` - The dummy `Request` object visited by `setup` and `middleware`.
 
 ```js
 import run from 'express-unit'
@@ -49,9 +61,9 @@ describe('myMiddleware', () => {
 })
 ```
 
-### Setup
+### `setup`
 
-Your setup function will be called with a `req`, `res`, and `next` to prepare the request lifecycle for your middleware. This is your opportunity to set headers on `req` or spy on any relevant methods on `res`. Call `next` to execute your middleware.
+Your setup function will be called with a `req`, `res`, and `next` to prepare the request lifecycle for your middleware. This is your opportunity to set headers on `req` or spy/stub any relevant methods on `res`. Call `next` to execute your middleware.
 
 If for some reason you don't want to supply a setup, just pass `null`.
 
@@ -70,9 +82,9 @@ export default function middleware(req, res, next) {
 ```
 
 ```js
-// middleware.spec.js
+// middleware.test.js
 describe('middleware', () => {
-  context('when the request has a token header', () => {
+  describe('when the request has a token header', () => {
     const setup = (req, res, next) => {
       req.headers['x-access-token'] = 'myToken'
       next()
@@ -99,15 +111,14 @@ export default function middleware(req, res, next) {
 ```
 
 ```js
-// middleware.spec.js
+// middleware.test.js
 describe('middleware', () => {
-  context('when the request does not have a token header', () => {
+  describe('when the request does not have a token header', () => {
     it('passes an Error', done => {
       run(null, middleware, (err, req, res) => {
         expect(err)
           .to.be.an('error')
           .with.property('message', 'Access token required.')
-        expect()
         done()
       })
     })
@@ -133,13 +144,13 @@ export const middleware = users => wrap(async ({ params }, res, next) => {
 ```
 
 ```js
-// middleware.spec.js
+// middleware.test.js
 describe('middleware', () => {
   const user = { id: 1, name: 'foo' }
   afterEach(() => {
     users.findById.restore()
   })
-  context('when the user is found', () => {
+  describe('when the user is found', () => {
     const setup = (req, res, next) => {
       req.params.userId = 1
       stub(users, 'findById').resolves(user)
@@ -158,7 +169,7 @@ describe('middleware', () => {
 
 ### Why Express Unit?
 
-Express Unit puts the "unit" back in [unit testing](https://en.wikipedia.org/wiki/Unit_testing) for Express.js apps. It's a small, simple helper for exercising individual middlewares in isolation. Most testing tutorials and examples for `express` apps will utilize `supertest` (or similar).
+Express Unit puts the "unit" back in [unit testing](https://en.wikipedia.org/wiki/Unit_testing) for Express.js apps. It's a small, simple helper for exercising individual middleware functions in isolation. Most testing tutorials and examples for `express` apps will utilize `supertest` (or similar).
 
 ```js
 import request from 'supertest'
@@ -179,16 +190,16 @@ describe('app', () => {
 })
 ```
 
-This is great for testing your entire `app` or a given `router` within your `app`. But this is [integration testing](https://en.wikipedia.org/wiki/Integration_testing). The more complex a code path becomes, the more brittle tests become. Units only have one reason to change. For some endpoints, various checks are put in place to determine the response, e.g. confirming a user's identity, verifying their access rights, or bailing out of a request early if preconditions are not met. A single route could employ a middleware stack like this:
+This is great for testing your entire `app` or a given `router` within your `app`. For some endpoints, various middleware functions are put in place to determine the response, e.g. confirming a user's identity, verifying their access rights, and bailing out of a request early if preconditions are not met. But testing all of this in concert is [integration testing](https://en.wikipedia.org/wiki/Integration_testing), which is often best left at testing the ["happy path"](https://en.wikipedia.org/wiki/Happy_path). A single route could employ a middleware stack like this:
 
 ```js
 router
   .use(authorize)
   .route('/users/:userId/permissions')
-  .put(checkUserPermissions('admin'), updateUserPermissions(users))
+  .put(userIs('admin'), updatePermissions(permissions))
 
 router
   .use(errorHandler(logger))
 ```
 
-There are 4 different middlewares involved in this single route. At least one of which needs access to some kind of data store. But each middleware is very focused and can be reused or replaced (Yay!).
+There are 4 different middleware functions involved in this single route. At least one of which needs access to some kind of data store. But each middleware is very focused and can be reused or replaced (Yay!).
