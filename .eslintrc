@@ -1,31 +1,17 @@
 {
   "env": {
-    "browser": true,
-    "es6": true,
-    "node": true
+    "node": true,
+    "es6": true
   },
-  "extends": "eslint:recommended",
-  "installedESLint": true,
-  "parser": "babel-eslint",
-  "parserOptions": {
-    "sourceType": "module"
-  },
+  "extends": ["standard"],
   "rules": {
-    "indent": [
-      2,
-      2
-    ],
-    "linebreak-style": [
-      2,
-      "unix"
-    ],
-    "quotes": [
-      2,
-      "single"
-    ],
-    "semi": [
-      2,
-      "never"
-    ]
+    "padded-blocks": 0,
+    "curly": ["error", "multi-line"],
+    "brace-style": ["error", "stroustrup"],
+    "space-before-function-paren": ["error", {
+      "anonymous": "always",
+      "named": "never",
+      "asyncArrow": "always"
+    }],
   }
 }

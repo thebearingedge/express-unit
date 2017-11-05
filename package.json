@@ -1,23 +1,27 @@
 {
   "name": "express-unit",
-  "version": "1.1.0",
-  "description": "",
+  "version": "2.0.0",
+  "description": "Express middleware testing made easy.",
   "main": "index.js",
   "files": [
     "dist/",
     "index.js"
   ],
   "engines": {
-    "node": ">=6.3.1",
-    "npm": ">=3.10.3"
+    "node": ">=8.0.0",
+    "npm": ">=5.0.2"
   },
   "scripts": {
     "lint": "eslint src/ test/",
     "test": "mocha -r babel-register -t 200",
-    "tdd": "npm -s test -- -w -R min",
-    "cover": "babel-node node_modules/.bin/babel-istanbul cover _mocha",
-    "transpile": "rimraf dist/ && babel src -d dist/",
-    "precommit": "run-s lint cover transpile"
+    "tdd": "npm -s t -- -w -R min",
+    "build": "rimraf dist/ && babel src/ -d dist/",
+    "cover": "nyc npm -s t",
+    "check": "nyc check-coverage",
+    "report": "codecov",
+    "precommit": "run-p -s lint cover",
+    "travis": "run-s -s lint cover check",
+    "prepublishOnly": "run-s -s precommit check build"
   },
   "repository": {
     "type": "git",
@@ -37,28 +41,30 @@
   },
   "homepage": "https://github.com/thebearingedge/express-unit#readme",
   "devDependencies": {
-    "babel-eslint": "7.2.2",
     "babel-cli": "6.26.0",
-    "babel-eslint": "7.2.1",
-    "babel-istanbul": "0.12.2",
-    "babel-plugin-transform-async-to-generator": "6.24.1",
-    "babel-preset-node6": "11.0.0",
-    "chai": "4.1.0",
-    "coveralls": "2.13.1",
-    "eslint": "4.1.0",
-    "express": "4.15.2",
+    "babel-plugin-transform-es2015-modules-commonjs": "6.26.0",
+    "babel-register": "6.26.0",
+    "chai": "4.1.2",
+    "codecov": "3.0.0",
+    "eslint": "4.10.0",
+    "eslint-config-standard": "10.2.1",
+    "eslint-plugin-import": "2.8.0",
+    "eslint-plugin-node": "5.2.1",
+    "eslint-plugin-promise": "3.6.0",
+    "eslint-plugin-standard": "3.0.1",
+    "express": "4.16.2",
     "express-async-wrap": "1.0.0",
-    "global": "4.3.2",
-    "npm-run-all": "4.1.0",
-    "mocha": "3.5.0",
-    "husky": "0.14.0",
-    "sinon-chai": "2.13.0",
-    "sinon": "2.3.5"
+    "husky": "0.14.3",
+    "mocha": "4.0.1",
+    "npm-run-all": "4.1.1",
+    "nyc": "11.3.0",
+    "sinon": "4.1.1",
+    "sinon-chai": "2.14.0"
   },
   "peerDependencies": {
     "express": "4.x"
   },
   "dependencies": {
-    "es6-error": "4.0.2"
+    "es6-error": "^4.0.2"
   }
 }

@@ -1,8 +1,5 @@
 {
   "plugins": [
-    "transform-async-to-generator"
-  ],
-  "presets": [
-    "node6"
+    "transform-es2015-modules-commonjs"
   ]
 }
