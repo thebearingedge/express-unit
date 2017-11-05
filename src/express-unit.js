@@ -21,7 +21,7 @@ const Response = () => ({
 
 const chainables = ['status', 'vary']
 
-export async function run(setup, middleware, done) {
+export async function run(setup, middleware, callback) {
 
   setup = setup || ((req, res, next) => next())
 
@@ -29,12 +29,12 @@ export async function run(setup, middleware, done) {
   const res = Response()
 
   let err = null
-  let isDone = false
+  let nextCalled = false
 
   const finish = (_err = null) => {
     err = _err
-    isDone = true
-    isFunction(done) && done(err, req, res)
+    nextCalled = true
+    isFunction(callback) && callback(err, req, res)
   }
 
   for (let property in res) {
@@ -56,9 +56,9 @@ export async function run(setup, middleware, done) {
 
   try {
     await promise
-    if (isDone || !isFunction(done)) return [err, req, res]
+    if (nextCalled || !isFunction(callback)) return [err, req, res]
     try {
-      done(err, req, res)
+      callback(err, req, res)
     }
     catch (err) {
       throw new ExpressUnitError(null, err)
