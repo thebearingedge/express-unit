@@ -1,6 +1,6 @@
 {
   "name": "express-unit",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Express middleware testing made easy.",
   "main": "index.js",
   "files": [

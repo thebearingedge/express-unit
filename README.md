@@ -25,7 +25,7 @@ Express middleware testing made easy.
 Express Unit exports a helper function for running a single middleware. To use, just `import` it and pass it a `setup` function, your `middleware`, and an optional `callback`.
 
 ```js
-import { run } from 'express-unit'
+import run from 'express-unit'
 
 run(setup|null, middleware[, callback])
 ```
@@ -43,8 +43,8 @@ run(setup|null, middleware[, callback])
   - `next` - A function used to signal the completion of the `middlware`.
 - `callback` - An optional function used to inspect the outcome of passing the Request/Response lifecycle through `setup` and `middleware`.
   - `err` - Forwarded from `next(err)` in `middleware` (if any).
-  - `req` - The dummy `Response` object visited by `setup` and `middleware`.
-  - `res` - The dummy `Request` object visited by `setup` and `middleware`.
+  - `req` - The dummy `Request` object visited by `setup` and `middleware`.
+  - `res` - The dummy `Response` object visited by `setup` and `middleware`.
 
 ```js
 import run from 'express-unit'
