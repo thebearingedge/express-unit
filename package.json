@@ -50,7 +50,7 @@
     "eslint-config-standard": "10.2.1",
     "eslint-plugin-import": "2.8.0",
     "eslint-plugin-node": "5.2.1",
-    "eslint-plugin-promise": "3.6.0",
+    "eslint-plugin-promise": "3.7.0",
     "eslint-plugin-standard": "3.0.1",
     "express": "4.16.2",
     "express-async-wrap": "1.0.0",
