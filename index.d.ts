@@ -1,5 +1,5 @@
 declare module 'express-unit' {
-  import { RequestHandler, ErrorRequestHandler } from 'express'
+  import { Request, Response, RequestHandler, ErrorRequestHandler } from 'express'
   function run(
     setup: RequestHandler | null,
     middleware: RequestHandler | ErrorRequestHandler,
