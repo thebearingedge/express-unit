@@ -17,6 +17,8 @@ Express middleware testing made easy.
    + [Setup](#setup)
    + [Callbacks](#callbacks)
    + [Async](#async)
+- [Examples](#Examples)
+   + [Testing JSON](#json)
  - [Why Express Unit?](#why-express-unit)
 ---
 
@@ -164,6 +166,31 @@ describe('middleware', () => {
     })
   })
 })
+```
+
+### Examples
+
+#### Testing JSON
+You can highjack `res.json` in your `setup` to write over itself with the `.json` call that the middleware in testing passed. This will give you an object that you can test against.
+```js
+// middleware.js
+export const middleware = (req, res, next) => {
+  res.json({
+    message: 'my return message'
+  })
+}
+```
+```js
+// middleware.test.js
+describe('middleware', () => {
+  it('passes message', async () => {
+    const setup = (req, res, next) => {
+      res.json = json => { res.json = json }
+      next()
+    }
+    const [,,{json}] = await run(setup, middleware)
+    expect(json.message).to.equal('my return message')
+  })
 ```
 ---
 
